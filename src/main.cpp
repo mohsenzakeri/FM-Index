@@ -1,5 +1,10 @@
 #include <iostream>
 #include <bitset>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#include <divsufsort.h>
 
 #include "BitVector.hpp"
 #include "RankSupport.hpp"
@@ -55,4 +60,24 @@ int main() {
     std::cerr<<r.rank1(12) << " "<< r.rank0(12) << "\n";
 
     std::cerr<<r.overhead() << "overhead\n" << b.get_arr().size()*64 << "\n";
+
+
+    char *Text = "abracadabra";
+    int n = strlen(Text);
+    int i, j;
+    int *SA = (int *)malloc(n * sizeof(int));
+    int *A = (int *)malloc(n * sizeof(int));
+    divsufsort((unsigned char *)Text, SA, n);
+    for(i = 0; i < n; ++i) {
+        printf("SA[%2d] = %2d: ", i, SA[i]);
+        for(j = SA[i]; j < n; ++j) {
+            printf("%c", Text[j]);
+        }
+        printf("$\n");
+    }
+    free(SA);
+    unsigned char* U = (unsigned char*)malloc(n * sizeof(unsigned char));
+    divbwt((unsigned char *)Text, U, A, n);
+    std::cerr<<"T:"<<Text<<"\n";
+    std::cerr<<"U:"<<U<<"\n";
 }
