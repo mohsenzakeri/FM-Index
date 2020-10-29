@@ -1,6 +1,7 @@
 #include <cstring>
 #include <map>
 #include <sys/stat.h> 
+#include <algorithm>
 
 #include "FMIndex.hpp"
 
@@ -12,12 +13,19 @@ FMIndex::FMIndex(char* input_file) {
     long fsize = ftell(f);
     fseek(f, 0, SEEK_SET);
 
-    char *input_text = (char *)malloc(fsize + 1);
+    char *input_text = static_cast<char *>(malloc(fsize + 1));
     fread(input_text, fsize, 1, f);
     fclose(f);
 
     input_text[fsize] = 0;
-
+    //*std::remove(input_text, input_text+strlen(input_text), '\n') = '\0';
+    //input_text[strcspn(input_text, "\n")] = '\0';
+    std::string input_string(input_text);
+    input_string.erase(std::remove(input_string.begin(), input_string.end(), '\n'),
+            input_string.end());
+    delete input_text;
+    input_text = static_cast<char *>(malloc(input_string.size() + 1));
+    strcpy(static_cast<char*>(input_text), input_string.c_str());
     build(input_text);
     std::cerr<<input_text<<" done!\n";
 }
@@ -33,6 +41,8 @@ void FMIndex::build(char* input_text) {
     std::vector<uint64_t> all_chars = std::vector<uint64_t>(all_chars_num, 0);
     for (uint64_t i = 0; i < length-1; i++) {
         uint64_t char_index = static_cast<uint64_t>(input_text[i]);
+	if (input_text[i] == '\n')
+	    continue;
 	all_chars[char_index] += 1;
     }
     std::map<unsigned char, uint32_t> alphamap;

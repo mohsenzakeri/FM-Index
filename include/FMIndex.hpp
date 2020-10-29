@@ -3,9 +3,9 @@
 
 #include <divsufsort.h>
 
-#include "BitVector.hpp";
-#include "RankSupport.hpp";
-#include "SelectSupport.hpp";
+#include "BitVector.hpp"
+#include "RankSupport.hpp"
+#include "SelectSupport.hpp"
 
 class FMIndex {
 public:
