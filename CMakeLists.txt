@@ -1,10 +1,18 @@
 cmake_minimum_required(VERSION 3.0)
 
-project(FM-Index)
+include_directories(include)
 
-add_executable(bitvector src/main.cpp src/BitVector.cpp src/RankSupport.cpp src/SelectSupport.cpp src/FMIndex.cpp)
+project(bitvector)
 
-target_include_directories(bitvector PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/../include")
+#add_executable(bitvector src/main.cpp src/BitVector.cpp src/RankSupport.cpp src/SelectSupport.cpp src/FMIndex.cpp )
+
+set(bitvector_lib_srcs src/BitVector.cpp src/RankSupport.cpp src/SelectSupport.cpp src/FMIndex.cpp)
+add_library(bitvector STATIC ${bitvector_lib_srcs})
+target_include_directories(bitvector PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/../include")
+
+#set(SOURCES ${YOUR_DIRECTORY}/file1.h ${YOUR_DIRECTORY}/file2.h)
+
+add_executable(main src/main.cpp)
 
 ## Targets ##
 include_directories("${CMAKE_CURRENT_SOURCE_DIR}/../libraries/libdivsufsort/include"
@@ -20,7 +28,7 @@ link_directories("${CMAKE_CURRENT_BINARY_DIR}/../libraries/libdivsufsort/lib")
 # add_subdirectory(libraries/libdivsufsort)
 
 # Link the executable and the library together
-target_link_libraries(bitvector divsufsort)
+target_link_libraries(main bitvector divsufsort)
 
 
 
