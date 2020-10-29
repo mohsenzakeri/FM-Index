@@ -42,7 +42,6 @@ void FMIndex::build(char* input_text) {
 	    alphabet.push_back(static_cast<unsigned char>(i)); 
 	    counts.push_back(all_chars[i]);
 	    bit_vector* new_bit_vector = new bit_vector(length);
-	    occs.push_back(new_bit_vector);
 	    occs_rank.push_back(new rank_support(new_bit_vector));
 	    alphamap[static_cast<unsigned char>(i)] = alphabet_index;
 	    alphabet_index +=1 ;
@@ -53,11 +52,7 @@ void FMIndex::build(char* input_text) {
 
     for (uint64_t i = 0; i < length-1; i++) {
         uint32_t alphabet_index = alphamap[bwt[i]];
-	occs[alphabet_index]->set_index(i);
-    }
-    for (uint64_t i = 0; i < occs.size(); i++) {
-	std::cerr<<i<<":";
-        occs[i]->show();
+	occs_rank[alphabet_index]->get_bit_vec()->set_index(i);
     }
 }
 
@@ -90,4 +85,38 @@ void FMIndex::save(char* output_dir) {
     for (auto& item : alphabet)
 	fout.write((char*) &item, sizeof(item));
     fout.close();
+}
+
+void FMIndex::load(char* index_dir) {
+    std::string fname = static_cast<std::string>(index_dir) + "/index.bin";
+    std::ifstream fin(fname, std::ios::in | std::ios::binary);
+
+    fin.read((char*) &length, sizeof(length));
+    bwt = (unsigned char*)malloc(length * sizeof(unsigned char));
+    unsigned char curr_char;
+    for (uint64_t i = 0; i < length; i++) {
+        fin.read((char*) &curr_char, sizeof(curr_char));
+	bwt[i] = curr_char;
+    }
+    uint32_t alphabet_size = 0;
+    fin.read((char*) &alphabet_size, sizeof(alphabet_size));
+    uint64_t count = 0;
+    for (uint32_t i = 0; i < alphabet_size; i++) {
+        fin.read((char*) &count, sizeof(count));
+	counts.push_back(count);
+    }
+    unsigned char curr_alpha = 0;
+    for (uint32_t i = 0; i < alphabet_size; i++) {
+        fin.read((char*) &curr_alpha, sizeof(curr_alpha));    
+	alphabet.push_back(curr_alpha);
+    }
+    fin.close();
+    for (uint32_t i = 0; i < alphabet_size; i++) {
+        std::string curr_char(1, alphabet[i]);
+	std::string file_name = static_cast<std::string>(index_dir) + "/" + curr_char + ".rank";
+        rank_support* new_rank = new rank_support();
+	new_rank->load(file_name);
+	occs_rank.push_back(new_rank);
+    }
+    std::cerr<<"bwt:"<<bwt<<" loaded\n";
 }
