@@ -4,6 +4,8 @@ project(FM-Index)
 
 add_executable(bitvector src/main.cpp src/BitVector.cpp src/RankSupport.cpp src/SelectSupport.cpp src/FMIndex.cpp)
 
+target_include_directories(bitvector PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/../include")
+
 ## Targets ##
 include_directories("${CMAKE_CURRENT_SOURCE_DIR}/../libraries/libdivsufsort/include"
                     "${CMAKE_CURRENT_BINARY_DIR}/../libraries/libdivsufsort/include")
