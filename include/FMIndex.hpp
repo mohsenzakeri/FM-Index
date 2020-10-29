@@ -18,6 +18,7 @@ private:
     std::vector<uint64_t> counts;
     uint64_t length;
     std::vector<bit_vector*> occs;
+    std::vector<rank_support*> occs_rank;
 };
 
 #endif
