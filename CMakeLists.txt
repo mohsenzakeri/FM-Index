@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.0)
 
 project(FM-Index)
 
-add_executable(bitvector src/main.cpp src/BitVector.cpp src/RankSupport.cpp src/SelectSupport.cpp)
+add_executable(bitvector src/main.cpp src/BitVector.cpp src/RankSupport.cpp src/SelectSupport.cpp src/FMIndex.cpp)
 
 ## Targets ##
 include_directories("${CMAKE_CURRENT_SOURCE_DIR}/../libraries/libdivsufsort/include"
