@@ -38,9 +38,9 @@ int main() {
     bit_vector b(2000000);
     //b.show();
 
-    for (int i = 0; i < 1000; i++)
+    for (int i = 0; i < 1000; i+=3)
         b.set_index(i);
-    b.reset_index(5);
+    //b.reset_index(5);
     b.show_range(0,20);
     /*b.set_index(0);
     b.set_index(10);
@@ -55,29 +55,9 @@ int main() {
 
     rank_support r(&b);
     std::cerr<<r(1000);
-    std::cerr<<"r(5)  r(0)  r(14) r(20) \n";
-    std::cerr<<r(5)<< "\n"<< r(0) << "\n"<< r(14) << "\n"<< r(20) <<"\n";
+    std::cerr<<"r(5)  r(0)  r(14) r(1200) \n";
+    std::cerr<<r(5)<< "|"<< r(0) << "|"<< r(14) << "|"<< r(1200) <<"\n";
     std::cerr<<r.rank1(12) << " "<< r.rank0(12) << "\n";
 
     std::cerr<<r.overhead() << "overhead\n" << b.get_arr().size()*64 << "\n";
-
-
-    char *Text = "abracadabra";
-    int n = strlen(Text);
-    int i, j;
-    int *SA = (int *)malloc(n * sizeof(int));
-    int *A = (int *)malloc(n * sizeof(int));
-    divsufsort((unsigned char *)Text, SA, n);
-    for(i = 0; i < n; ++i) {
-        printf("SA[%2d] = %2d: ", i, SA[i]);
-        for(j = SA[i]; j < n; ++j) {
-            printf("%c", Text[j]);
-        }
-        printf("$\n");
-    }
-    free(SA);
-    unsigned char* U = (unsigned char*)malloc(n * sizeof(unsigned char));
-    divbwt((unsigned char *)Text, U, A, n);
-    std::cerr<<"T:"<<Text<<"\n";
-    std::cerr<<"U:"<<U<<"\n";
 }
