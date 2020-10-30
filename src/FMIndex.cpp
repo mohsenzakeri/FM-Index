@@ -140,30 +140,29 @@ void FMIndex::load(char* index_dir) {
 
     for (uint32_t i = 0; i < alphabet_size; i++) {
         std::string curr_char(1, alphabet[i]);
-	std::string file_name = static_cast<std::string>(index_dir)  + curr_char + ".rank";
+	std::string file_name = static_cast<std::string>(index_dir) + "/" + curr_char + ".rank";
         rank_support* new_rank = new rank_support();
 	new_rank->load(file_name);
 	occs_rank.push_back(new_rank);
     }
 }
 
-bool FMIndex::query(char* query, uint64_t& from_, uint64_t& to_) {
+bool FMIndex::query(std::string pattern, uint64_t& from_, uint64_t& to_) {
     uint64_t from = 0, to = 0;
     uint64_t* res;
-    for (uint64_t i = strlen(query)-1; i > 0; i--) {
-       if (i == strlen(query)-1) {
-           uint64_t char_index = alphamap[query[i]];
+    for (uint64_t i = pattern.length()-1; i > 0; i--) {
+       if (i == pattern.length()-1) {
+           uint64_t char_index = alphamap[pattern[i]];
 	   for (uint32_t j = 0; j < char_index; j++) {
                from += counts[j];
 	       to += counts[j];
 	   }
 	   to += counts[char_index];
        }
-       res = check_next(from, to, query[i-1]);
+       res = check_next(from, to, pattern[i-1]);
        from = res[0];
        to = res[1];
        if (res[0] == res[1] or res[1] == std::numeric_limits<uint64_t>::max() or res[0] == std::numeric_limits<uint64_t>::max()) {
-           std::cerr<<"Not Found!\n";
 	   from_ = 0;
 	   to_ = 0;
 	   return false;

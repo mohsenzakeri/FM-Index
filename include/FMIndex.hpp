@@ -16,7 +16,7 @@ public:
     void build(char* input_text);
     void save(char* output_dir);
     void load(char* index_dir);
-    bool query(char* pattern, uint64_t& from_, uint64_t& to);
+    bool query(std::string pattern, uint64_t& from_, uint64_t& to);
     uint64_t* check_next(uint64_t from, uint64_t to, char c);
 private:
     unsigned char* bwt;

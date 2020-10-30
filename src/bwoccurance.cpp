@@ -14,10 +14,23 @@ int main(int argc, char* argv[]) {
 	FMIndex fm_(argv[2]);
 	std::cerr<<argv[3]<<"\n";
 	fm_.save(argv[3]);
+	/*std::cerr<<"ATAGTGGGCAACCAAGCACAGTTT\n";
+	FMIndex fm;
+	fm.load(argv[3]);
+	uint64_t from, to;
+	bool res = fm.query("ATAGTGGGCAACCAAGCACAG", from, to);
+	std::cerr<<res << "\t" << from << " " << to <<"\n";*/
     } else if(command == "query") {
         std::cerr<<"query\n";
 	FMIndex fm_;
 	fm_.load(argv[3]);
+	std::ifstream infile(argv[2]);
+	std::string pattern;
+	while (infile >> pattern) {
+	    uint64_t from, to;
+	    fm_.query(pattern, from, to);
+	    std::cerr<<from<<"\t"<<to<<"\n";
+        }
     } else {	    
       std::cerr<<"Undefined command\n";
       std::cerr<<"Please specify the following formats:\n";
