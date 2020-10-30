@@ -12,19 +12,14 @@ int main(int argc, char* argv[]) {
     if (command == "build") {
 	std::cerr<<"build\n";
 	FMIndex fm_(argv[2]);
+	std::cerr<<"Index is successfully built!\n";
 	std::cerr<<argv[3]<<"\n";
 	fm_.save(argv[3]);
-	std::cerr<<"ATAGTGGGCAACCAAGCACAGTTT\n";
-	//FMIndex fm;
-	//fm.load(argv[3]);
-	uint64_t from, to;
-	bool res = fm_.query("ATAGTGGGCAACCAAGCACAG", from, to);
-	std::cerr<<res << "\t" << from << " " << to <<"\n";
     } else if(command == "query") {
         std::cerr<<"query\n";
 	FMIndex fm_;
-	fm_.load(argv[3]);
-	std::ifstream infile(argv[2]);
+	fm_.load(argv[2]);
+	std::ifstream infile(argv[3]);
 	std::string pattern;
 	while (infile >> pattern) {
 	    uint64_t from, to;

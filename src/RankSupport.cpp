@@ -103,7 +103,7 @@ uint64_t rank_support::rank0(uint64_t index) {
 }
 
 uint64_t rank_support::overhead() {
-    uint64_t rps_size = 0;//Rps.size() * (Rps[0].size() * 8);
+    uint64_t rps_size = 0;
     return Rs.get_size_in_bits() + Rb.get_size_in_bits() + rps_size + 6*64;
 }
 
@@ -147,7 +147,7 @@ bool rank_support::load(std::string& fname) {
 
     fin.read((char*) &num_bits, sizeof(num_bits));
     bit_vec = new bit_vector(num_bits);
-    uint64_t arr_length = static_cast<uint64_t>(num_bits/64) + 1;;
+    uint64_t arr_length = static_cast<uint64_t>(num_bits/64) + 1;
     for (uint64_t i = 0; i < arr_length; i++) {
         uint64_t arr_item = 0;
 	fin.read((char*) &arr_item, sizeof(arr_item));
@@ -173,6 +173,7 @@ bool rank_support::load(std::string& fname) {
     fin.read((char*) &arr_size, sizeof(arr_size));
     fin.read((char*) &length, sizeof(length));
     fin.read((char*) &bsize, sizeof(bsize));
+    Rb = bit_vector(length, static_cast<uint64_t>(bsize)); 
     for (uint64_t i = 0; i < arr_size; i++) {
         uint64_t block_item = 0;
 	fin.read((char*)& block_item, sizeof(block_item));

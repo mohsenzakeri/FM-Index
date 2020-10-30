@@ -40,7 +40,7 @@ void FMIndex::build(char* input_text) {
             bwt[i+1] = input_text[SA[i] - 1];
     }
     free(SA);
-    std::cerr<<"bwt:"<<bwt<<"\n";
+    //std::cerr<<"bwt:"<<bwt<<"\n";
     char last_char = input_text[length-1];
     uint32_t all_chars_num = 256;
     std::vector<uint64_t> all_chars = std::vector<uint64_t>(all_chars_num, 0);
