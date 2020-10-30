@@ -104,7 +104,7 @@ uint64_t rank_support::operator()(uint64_t index) {
     //return Rs[superblock_index] + Rb[block_index] + Rp;
     //std::cerr<<Rb.get_value(0) << " "<< Rb.get_value(1) << " " << Rb.get_value(2) << " " << Rb.get_value(3) << "\n";
     //std::cerr<<(int)Rb_[0] << " "<< (int)Rb_[1] << " " << (int)Rb_[2]<< " " << (int)Rb_[3] << "\n";
-    //std::cerr<< Rs.get_value(superblock_index) << "----" << Rb.get_value(block_index) << "---" << Rp << "\n";
+    //std::cerr<< index<< " "<< Rs.get_value(superblock_index) << "----" << Rb.get_value(block_index) << "---" << Rp << "\n";
     //std::cerr<< Rs_[superblock_index] << "----" << static_cast<int>(Rb_[block_index]) << "---" << Rp << "\n";
     return Rs.get_value(superblock_index) + Rb.get_value(block_index) + Rp;
 }
