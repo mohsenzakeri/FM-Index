@@ -12,6 +12,8 @@ class rank_support {
 public:
     rank_support(bit_vector* b);
     rank_support();
+    ~rank_support();
+
     uint64_t operator()(uint64_t index);
     uint64_t rank1(uint64_t index);
     uint64_t rank0(uint64_t index);
@@ -23,9 +25,6 @@ private:
     bit_vector* bit_vec;
     bit_vector Rs;
     bit_vector Rb;
-    std::vector<uint64_t> Rs_;
-    std::vector<uint8_t> Rb_;
-    std::vector<std::vector<uint8_t>> Rps;
 
     uint64_t num_bits;
     uint64_t superblock_size;

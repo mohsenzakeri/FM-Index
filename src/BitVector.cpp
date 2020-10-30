@@ -10,6 +10,18 @@ bit_vector::bit_vector(uint64_t l) : length(l), bsize(1) {
     arr = std::vector<uint64_t>(arr_length, 0);
 }
 
+bit_vector::bit_vector(uint64_t l, bool set) : length(l), bsize(1) {
+    uint64_t arr_length = static_cast<uint64_t>(length/64) + 1;
+    if (set)
+        arr = std::vector<uint64_t>(arr_length, 0xFFFFFFFFFFFFFFFF);
+    else
+	arr = std::vector<uint64_t>(arr_length, 0);
+}
+
+bit_vector::~bit_vector() {
+  arr.clear();
+}
+
 bit_vector::bit_vector(uint64_t l, uint64_t bs) {
     if (bs > 64) {
         std::cerr<<"The block length greater than 64 is not supported!\n";

@@ -60,7 +60,7 @@ uint64_t select_support::select0(uint64_t index) {
 }
 
 uint64_t select_support::overhead() {
-    return 0;
+    return rs->overhead();
 }
 
 bool select_support::save(std::string& fname) {

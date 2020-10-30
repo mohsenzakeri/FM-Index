@@ -6,8 +6,10 @@
 class bit_vector{
 public:
     bit_vector(uint64_t l);
+    bit_vector(uint64_t l, bool set);
     bit_vector(uint64_t l, uint64_t bs);
     bit_vector() { }
+    ~bit_vector();
 
     void set_index(uint64_t index);
     void reset_index(uint64_t index);
