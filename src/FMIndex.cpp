@@ -77,12 +77,7 @@ void FMIndex::build(char* input_text) {
 
 
 void FMIndex::save(char* output_dir) {
-    int check = mkdir(output_dir,0777);
-    if (!check) 
-        std::cerr<<"Directory created\n"; 
-    else {
-        std::cerr<<"Unable to create directory\n"; 
-    } 
+    mkdir(output_dir,0777);
     uint64_t index = 0;
     for (auto& occ_rank : occs_rank) {
 	std::string curr_char(1, alphabet[index]);
@@ -90,6 +85,7 @@ void FMIndex::save(char* output_dir) {
         occ_rank->save(file_name);
 	index += 1;
     }
+    std::cerr<<"Rank bit vectors are stored.\n";
     std::string fname = static_cast<std::string>(output_dir) + "/index.bin";
     std::ofstream fout(fname, std::ios::out | std::ios::binary);
     fout.write((char*) &length, sizeof(length));
@@ -107,6 +103,7 @@ void FMIndex::save(char* output_dir) {
 	unsigned char item = alphabet[i];
 	fout.write((char*) &item, sizeof(item));
     }
+    std::cerr<<"Rest of the index files are stored.\nIndex saved in "<<output_dir<<"\n";
     fout.close();
 }
 

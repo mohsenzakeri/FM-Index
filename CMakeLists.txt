@@ -11,9 +11,9 @@ target_include_directories(bitvector PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/../incl
 #add_executable(main src/main.cpp)
 add_executable(bwocc src/bwoccurance.cpp)
 
-include_directories("${CMAKE_CURRENT_SOURCE_DIR}/../libraries/libdivsufsort/include"
-                    "${CMAKE_CURRENT_BINARY_DIR}/../libraries/libdivsufsort/include")
-link_directories("${CMAKE_CURRENT_BINARY_DIR}/../libraries/libdivsufsort/lib")
+include_directories("${CMAKE_CURRENT_SOURCE_DIR}/../include/libdivsufsort"
+                    "${CMAKE_CURRENT_BINARY_DIR}/../include/libdivsufsort")
+link_directories("${CMAKE_CURRENT_BINARY_DIR}/../include/libdivsufsortlib")
 
 # Link the executable and the library together
 #target_link_libraries(main bitvector divsufsort)
