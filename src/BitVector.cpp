@@ -99,19 +99,19 @@ void bit_vector::set_value(uint64_t index, uint64_t value) {
 	arr[arr_number_from] = set_range(arr[arr_number_from], arr_index_from, arr_index_to, value);
     } else {
         uint64_t arr_index_from = from%64;
-	uint64_t arr_index_to = to%64;   
-	uint64_t left_bits_count = 64 - arr_index_from;
-	uint64_t right_bits_count = arr_index_to + 1;
-	uint64_t left_value = value >> left_bits_count;
-	uint64_t bit = 1;
-	uint64_t setter = ((bit<<left_bits_count)-1);
-	//std::cerr<<"setter: " << std::bitset<64>(setter) <<"\n";
-	uint64_t right_value = setter&value;
-	//std::cerr<<"?\n" << std::bitset<64>(value) << "\n" << left_bits_count << " " << std::bitset<64>(left_value) << "\n" << right_bits_count << " " <<  std::bitset<64>(right_value) << "?\n";
-	//std::cerr<<std::bitset<64>(arr[arr_number_from]) << "\n" << std::bitset<64>(arr[arr_number_to]) << "\n\n";
-	arr[arr_number_from] = set_range(arr[arr_number_from], arr_index_from, 63, right_value);
-	arr[arr_number_to] = set_range(arr[arr_number_to], 0, arr_index_to, left_value);
-	//std::cerr<<std::bitset<64>(arr[arr_number_from]) << "\n" << std::bitset<64>(arr[arr_number_to]) << "\n\n";
+        uint64_t arr_index_to = to%64;   
+        uint64_t left_bits_count = 64 - arr_index_from;
+        uint64_t right_bits_count = arr_index_to + 1;
+        uint64_t left_value = value >> left_bits_count;
+        uint64_t bit = 1;
+        uint64_t setter = ((bit<<left_bits_count)-1);
+        //std::cerr<<"setter: " << std::bitset<64>(setter) <<"\n";
+        uint64_t right_value = setter&value;
+        //std::cerr<<"?\n" << std::bitset<64>(value) << "\n" << left_bits_count << " " << std::bitset<64>(left_value) << "\n" << right_bits_count << " " <<  std::bitset<64>(right_value) << "?\n";
+        //std::cerr<<std::bitset<64>(arr[arr_number_from]) << "\n" << std::bitset<64>(arr[arr_number_to]) << "\n\n";
+        arr[arr_number_from] = set_range(arr[arr_number_from], arr_index_from, 63, right_value);
+        arr[arr_number_to] = set_range(arr[arr_number_to], 0, arr_index_to, left_value);
+        //std::cerr<<std::bitset<64>(arr[arr_number_from]) << "\n" << std::bitset<64>(arr[arr_number_to]) << "\n\n";
     }
 }
 
