@@ -4,7 +4,7 @@
 
 #include "FMIndex.hpp"
 
-FMIndex::FMIndex(char* input_file) {
+FMIndex::FMIndex(char* input_file, bool move = false) {
     // the code for reading a file to a char* is 
     // borrowed from https://stackoverflow.com/questions/18398167/how-to-copy-a-txt-file-to-a-char-array-in-c
     FILE *f = fopen(static_cast<char*>(input_file), "rb");
@@ -23,7 +23,12 @@ FMIndex::FMIndex(char* input_file) {
     delete input_text;
     input_text = static_cast<char *>(malloc(input_string.size() + 1));
     strcpy(static_cast<char*>(input_text), input_string.c_str());
-    build(input_text);
+    S = input_string;
+    if (move) {
+        build_move(input_text);
+    } else {
+        build(input_text);
+    }
 }
 
 void FMIndex::build(char* input_text) {
@@ -34,9 +39,9 @@ void FMIndex::build(char* input_text) {
     divsufsort((unsigned char *)input_text, SA, length);
     bwt[0] = input_text[length-1];
     for(int i = 0; i < length; ++i) {
-	if (SA[i] == 0)
+	    if (SA[i] == 0)
             bwt[i+1] = '$';
-	else
+	    else
             bwt[i+1] = input_text[SA[i] - 1];
     }
     free(SA);
@@ -77,40 +82,42 @@ void FMIndex::build(char* input_text) {
 
 
 uint32_t FMIndex::LF(uint32_t row) {
-    uint32_t lf = 1;
+    uint32_t lf = 0;
     uint32_t i = alphamap[bwt[row]];
     for (uint32_t k = 0; k < i; k++) {
         lf += counts[k];
     }
+    uint32_t ct = 0;
     for (uint32_t k = 0; k < row; k++) {
         if (bwt[k] == bwt[row])
-            lf += 1;
+            ct += 1;
     }
+    lf += ct;
+    if (row == 468) std::cerr << row << " " << lf << "\n";
     return lf;
 }
 
 void FMIndex::build_move(char* input_text) {
     length = strlen(input_text);
-    int *A = (int *)malloc((length+1) * sizeof(int));
-    bwt = (unsigned char*)malloc((length+1) * sizeof(unsigned char));
-    SA = (int *)malloc(length * sizeof(int));
+    std::cerr<<"length: " << length << "\n";
+    int *A = (int *)malloc((length) * sizeof(int));
+    bwt = (unsigned char*)malloc((length) * sizeof(unsigned char));
+    SA = (int *)malloc((length) * sizeof(int));
     divsufsort((unsigned char *)input_text, SA, length);
-    bwt[0] = input_text[length-1];
+
     for(int i = 0; i < length; ++i) {
-        if (SA[i] == 0)
-                bwt[i+1] = '$';
+        if (SA[i] != 0)
+            bwt[i] = input_text[SA[i] - 1]; // bwt entry is always one position before the SA 
         else
-                bwt[i+1] = input_text[SA[i] - 1];
+            bwt[i] = '$';
     }
+    std::cerr<<bwt<<"\n";
     // free(SA);
 
-    char last_char = input_text[length-1];
     uint32_t all_chars_num = 256;
     std::vector<uint64_t> all_chars = std::vector<uint64_t>(all_chars_num, 0);
-    for (uint64_t i = 0; i <= length; i++) {
+    for (uint64_t i = 0; i < length; i++) {
         uint64_t char_index = static_cast<uint64_t>(bwt[i]);
-        if (input_text[i] == '\n')
-            continue;
         all_chars[char_index] += 1;
     }
     uint32_t alphabet_index = 0;
@@ -119,6 +126,7 @@ void FMIndex::build_move(char* input_text) {
             alphabet.push_back(static_cast<unsigned char>(i)); 
             counts.push_back(all_chars[i]);
             alphamap[static_cast<unsigned char>(i)] = alphabet_index;
+            std::cerr<< static_cast<unsigned char>(i) << " " << all_chars[i] << " " << alphabet_index << " " << i << "\n";
             alphabet_index +=1 ;
     	}
     }
@@ -126,15 +134,14 @@ void FMIndex::build_move(char* input_text) {
     uint32_t len = 1;
     uint32_t offset = 0;
     bit_vector* bits = new bit_vector(length+1);
-    uint32_t i = 0;
-    for (;i < length - 1; i++) {
+    for (uint32_t i = 0; i < length; i++) {
         if (bwt[i] == bwt[i+1])
             len += 1;
         else {
             uint32_t lf  = 0;
             if (bwt[i] != '$')
                 lf = LF(offset);
-            move_row row = move_row(offset, length, lf, i, bwt[i]);
+            move_row row = move_row(offset, len, lf, i, bwt[i]);
             bits->set_index(offset);
             rlbwt.push_back(row);
             offset += len;
@@ -142,16 +149,10 @@ void FMIndex::build_move(char* input_text) {
         }
     }
 
-    uint32_t    lf  = 0;
-    if (bwt[i] != '$')
-        lf = LF(offset);
-    move_row row = move_row(offset, length, lf, i, bwt[i]);
-    rlbwt.push_back(row);
-    bits->set_index(offset);
-    // print(bits)
+    move_row& row = rlbwt.back();
     rank_support rbits = rank_support(bits);
     for (auto& row: rlbwt) {
-        uint32_t set_bit = row.pp;
+        uint32_t set_bit = row.pp;        
         while (set_bit > 0 and bits->read_bit(set_bit) == 0)
             set_bit -= 1;
         if (set_bit == 0 and bits->read_bit(set_bit) == 0)
@@ -163,9 +164,11 @@ void FMIndex::build_move(char* input_text) {
 
 int32_t FMIndex::get_index(uint32_t i) {
     int32_t index = 0;
-    while (i >= rlbwt[index].p + rlbwt[index].n)
+    while (i >= rlbwt[index].p + rlbwt[index].n) {
         index += 1;
-    return index - 1;
+    }
+    std::cerr<<index << " " << i << " " << rlbwt[index].p << " " << rlbwt[index].n << "\n";
+    return index;
 }
 
 int32_t FMIndex::fast_forward(uint32_t pointer, uint32_t index) {
@@ -187,27 +190,31 @@ uint32_t LCP(std::string x, std::string y) {
     return lcp;
 }
 
-int32_t FMIndex::move_rl_query_ms(std::string R, std::string S, std::vector<uint32_t>& ms_lens) {
+int32_t FMIndex::move_rl_query_ms(std::string R, std::vector<uint32_t>& ms_lens) {
+    std::cerr<<R << " " << R.length() << "\n";
     uint32_t pointer = 1;
     uint32_t pos_on_r = R.length() - 1;
     uint32_t i = alphamap[R[pos_on_r]];
     for (uint32_t k = 0; k < i; k++)
         pointer += counts[k];
     std::cout<< "Suffix Array[" << pointer << "] = " << SA[pointer] << "\n";
-    if (R[pos_on_r] == '0' or R[pos_on_r] == '1')
+    std::cerr<< S[SA[pointer] - 1] << "\n";
+    /*if (R[pos_on_r] == '0' or R[pos_on_r] == '1')
         while (SA[pointer] % 2 == 0 and pointer < S.length())
-            pointer += 1;
+            pointer += 1;*/
     int32_t index = get_index(pointer);
     uint32_t match_len = 1;
+    //std::cerr<<rlbwt[index].c << " ? " << R[pos_on_r] << "\n";
     while (true) {
+        std::cout << pointer << ", match_len: " << match_len << " pos_on_r: " << pos_on_r << "\n";
         pos_on_r -= 1;
-        std::cout << pointer << " - match_len: " << match_len << " pos_on_r: " << pos_on_r << "\n";
         if (pos_on_r == -1) {
             std::cerr << "Found! at position " << SA[pointer] << "\n";
             ms_lens.push_back(match_len);
             return 1;
         }
         auto& row = rlbwt[index];
+        std::cerr<<row.c << " ? " << R[pos_on_r] << "\n";
         if (row.c == R[pos_on_r]) {
             pointer = row.pp + (pointer - row.p);
             index = row.id;

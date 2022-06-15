@@ -28,7 +28,7 @@ struct move_row{
 class FMIndex {
 public:
     FMIndex() { }
-    FMIndex(char* input_file);
+    FMIndex(char* input_file, bool move);
     void build(char* input_text);
     void save(char* output_dir);
     void load(char* index_dir);
@@ -37,11 +37,12 @@ public:
 
     void build_move(char* input_text);
     uint32_t LF(uint32_t row);
-    int32_t move_rl_query_ms(std::string R, std::string S, std::vector<uint32_t>& ms_lens);
+    int32_t move_rl_query_ms(std::string R, std::vector<uint32_t>& ms_lens);
     int32_t get_index(uint32_t i);
     int32_t fast_forward(uint32_t pointer, uint32_t index);
 private:
     unsigned char* bwt;
+    std::string S;
     std::vector<unsigned char> alphabet;
     std::vector<uint64_t> counts;
     uint64_t length;

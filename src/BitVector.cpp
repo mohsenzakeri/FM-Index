@@ -170,6 +170,7 @@ void bit_vector::show_range(uint64_t from, uint64_t to) {
 
 bool bit_vector::read_bit(uint64_t index) {
      if (index >= length) {
+        std::cerr<<"index: " << index << " length: " << length << "\n";
         std::cerr<<"Index greater than the length\n";
         return false;
     }
